@@ -1,13 +1,14 @@
+#pragma once
+
 #include <memory>
 
+#include "absl/status/status.h"
+#include "snake/board.h"
+
 namespace SnakeEngine {
-enum class Cell { kEmpty, kSnakeBody, kSnakeHead, kApple };
-
-enum class Move { kUp, kDown, kLeft, kRight };
-
 class SnakeGame {
 public:
-  SnakeGame();
+  SnakeGame(int width, int height);
   // Destructor
   ~SnakeGame();
 
@@ -15,11 +16,13 @@ public:
   SnakeGame(const SnakeGame &) = delete;
   SnakeGame &operator=(const SnakeGame &) = delete;
 
-  absl::Status makeMove(Move move);
+  // Runs the game
+  absl::Status startGame();
+
+  bool IsGameOver() const;
 
 private:
   struct Impl;
   std::unique_ptr<Impl> impl_;
 };
-
 } // namespace SnakeEngine
