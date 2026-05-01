@@ -18,7 +18,7 @@ public:
   Board &operator=(const Board &) = delete;
 
   // apply the move, return the current score after the move
-  int applyMove(Move move);
+  absl::StatusOr<int> applyMove(Move move);
   bool IsGameOver() const;
 
 private:
