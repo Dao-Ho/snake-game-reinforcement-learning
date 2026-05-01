@@ -19,7 +19,7 @@ add_library(snake_engine src/board.cc)
 
 
 add_executable(snake_game snake_game.cpp)
-target_link_libraries(snake_engine PRIVATE absl::status absl::statusor)
+target_link_libraries(snake_engine PUBLIC absl::status absl::statusor)
 target_link_libraries(snake_game PRIVATE snake_engine)
 
 
