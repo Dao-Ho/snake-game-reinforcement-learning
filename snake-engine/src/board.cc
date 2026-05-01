@@ -71,6 +71,22 @@ struct Board::Impl {
     int chosen = dist(rng);
     grid[chosen] = Cell::kApple;
   }
+
+  // Determines if the move given is valid given the snake's current direction
+  bool IsValidMove(Move move) {
+    switch (snake_direction) {
+    case Move::kup:
+      return move != Move::kDown;
+    case Move::kDown:
+      return move != Move::kUp;
+    case Move::Right:
+      return move != Move::kLeft;
+    case Move::Left:
+      return move != Move::kRight;
+    default:
+      return false;
+    }
+  }
 };
 
 Board::Board(int width, int height) : impl_(std::make_unique<Impl>()) {
@@ -89,7 +105,11 @@ bool Board::IsGameOver() const {
 }
 
 absl::StatusOr<int> Board::applyMove(Move move) {
-  // TODO
+  // Return error status for invalid move given
+  if (!impl_->IsValidMove(move)) {
+    return absl::InvalidArgumentError("Move given is invalid");
+  }
+
   return impl_->score;
 }
 
