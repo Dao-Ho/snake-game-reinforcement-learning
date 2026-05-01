@@ -75,16 +75,31 @@ struct Board::Impl {
   // Determines if the move given is valid given the snake's current direction
   bool IsValidMove(Move move) {
     switch (snake_direction) {
-    case Move::kup:
+    case Move::kUp:
       return move != Move::kDown;
     case Move::kDown:
       return move != Move::kUp;
-    case Move::Right:
+    case Move::kRight:
       return move != Move::kLeft;
-    case Move::Left:
+    case Move::kLeft:
       return move != Move::kRight;
     default:
       return false;
+    }
+  }
+
+  const char *GetCellCharacter(int i) {
+    switch (grid[i]) {
+    case Cell::kEmpty:
+      return ".";
+    case Cell::kSnakeHead:
+      return "@";
+    case Cell::kSnakeBody:
+      return "o";
+    case Cell::kApple:
+      return "*";
+    default:
+      return "";
     }
   }
 };
@@ -104,13 +119,21 @@ bool Board::IsGameOver() const {
   return impl_->IsOutOfBounds() || impl_->IsCollidingWithBody();
 }
 
-absl::StatusOr<int> Board::applyMove(Move move) {
+absl::StatusOr<int> Board::ApplyMove(Move move) {
   // Return error status for invalid move given
   if (!impl_->IsValidMove(move)) {
     return absl::InvalidArgumentError("Move given is invalid");
   }
-
   return impl_->score;
+}
+
+void Board::DisplayBoard() const {
+  for (int i = 0; i < impl_->width * impl_->height; ++i) {
+    std::cout << impl_->GetCellCharacter(i);
+    if ((i + 1) % impl_->width == 0) {
+      std::cout << '\n';
+    }
+  }
 }
 
 } // namespace SnakeEngine
