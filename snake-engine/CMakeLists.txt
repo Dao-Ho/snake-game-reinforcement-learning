@@ -12,11 +12,15 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
   GIT_TAG 20260107.1
 )
+set(ABSL_BUILD_TESTING OFF CACHE BOOL "Disable Abseil tests")
+FetchContent_MakeAvailable(abseil-cpp)
+add_library(snake_engine src/board.cc)
+
+
 
 add_executable(snake_game snake_game.cpp)
-set(ABSL_BUILD_TESTING OFF CACHE BOOL "Disable Abseil tests")
+target_link_libraries(snake_engine PRIVATE absl::status absl::statusor)
+target_link_libraries(snake_game PRIVATE snake_engine)
 
-FetchContent_MakeAvailable(abseil-cpp)
-target_link_libraries(snake_game PRIVATE absl::status)
 
-target_include_directories(snake_game PRIVATE include)
+target_include_directories(snake_engine PUBLIC include)
