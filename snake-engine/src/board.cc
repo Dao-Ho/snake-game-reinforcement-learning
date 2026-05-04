@@ -17,7 +17,6 @@ struct Board::Impl {
   int width;
   int height;
   int score;
-  bool game_over;
   std::mt19937 rng{std::random_device{}()};
 
   // helper to convert 2D to 1D index for flatmap
@@ -45,7 +44,6 @@ struct Board::Impl {
   void InitializeGrid() {
     grid.assign(width * height, Cell::kEmpty);
     score = 0;
-    game_over = false;
   }
 
   // Spawn the snake at the middle of the board
@@ -184,9 +182,9 @@ absl::StatusOr<int> Board::ApplyMove(Move move) {
   impl_->HandleAdvancingSnake(move);
 
   // Determine if game is over
-
-  // Update the new cell with the head, if the new cell is an apple, spawn a new
-  // apple and update the score
+  if (IsGameOver()) {
+    return absl::OutOfRangeError("Game is over");
+  }
 
   // Return the score
   return impl_->score;
