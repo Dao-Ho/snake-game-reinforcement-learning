@@ -97,6 +97,8 @@ struct Board::Impl {
       break;
     case Cell::kSnakeBody:
     case Cell::kSnakeHead:
+      snake.push_front(updated_position);
+
       return;
     }
   }
@@ -205,6 +207,6 @@ int Board::GetWidth() const { return impl_->width; }
 
 int Board::GetHeight() const { return impl_->height; }
 
-const std::vector<Cell>& Board::GetGrid() const { return impl_->grid; }
+const std::vector<Cell> &Board::GetGrid() const { return impl_->grid; }
 
 } // namespace SnakeEngine
