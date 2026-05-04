@@ -27,7 +27,7 @@ int main() {
   Board game_board(24, 21);
   Move current_move = Move::kUp;
 
-  while (!game_board.IsGameOver()) {
+  while (true) {
     int ch = getch();
     switch (ch) {
     case KEY_UP:    current_move = Move::kUp;    break;
@@ -36,6 +36,8 @@ int main() {
     case KEY_RIGHT: current_move = Move::kRight; break;
     default: break;
     }
+
+    auto result = game_board.ApplyMove(current_move);
 
     clear();
     const auto& grid = game_board.GetGrid();
@@ -47,9 +49,9 @@ int main() {
     }
     refresh();
 
-    auto result = game_board.ApplyMove(current_move);
     if (!result.ok() &&
         result.status().code() == absl::StatusCode::kOutOfRange) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
       break;
     }
 
