@@ -183,9 +183,9 @@ bool Board::IsGameOver() const {
 int Board::GetScore() const { return impl_->score; }
 
 absl::StatusOr<int> Board::ApplyMove(Move move) {
-  // Return error status for invalid move given
+  // Fall back to current direction on invalid move (e.g. reverse direction)
   if (!impl_->IsValidMove(move)) {
-    return absl::InvalidArgumentError("Move given is invalid");
+    move = impl_->snake_direction;
   }
 
   // Advance the snake to the updated cell
