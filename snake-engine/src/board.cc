@@ -23,9 +23,9 @@ struct Board::Impl {
   int Index(int row, int col) const { return row * width + col; }
 
   // helper to check if the snake is out of bounds
-  bool IsOutOfBounds() const {
-    return snake.front().row >= height || snake.front().row < 0 ||
-           snake.front().col >= width || snake.front().col < 0;
+  bool IsOutOfBounds(int current_row, int current_col) const {
+    return current_row >= height || current_row < 0 || current_col >= width ||
+           current_col < 0;
   }
 
   // helper to check if the snake is colliding with its own body
@@ -58,10 +58,11 @@ struct Board::Impl {
 
   // Update the snake based on the move, if the new cell is an apple, spawn a
   // new apple and update the score
-  void HandleAdvancingSnake(Move move) {
+  absl::Status HandleAdvancingSnake(Move move) {
     Position new_snake_head_position = DetermineUpdatedSnakeHeadPosition(move);
     Cell incoming_cell_type =
         grid[Index(new_snake_head_position.row, new_snake_head_position.col)];
+    HandleIncomingCellType(incoming_cell_type);
   }
 
   void AdvanceSnake(Position updated_position, bool is_growing) {
@@ -103,9 +104,9 @@ struct Board::Impl {
     case Move::kDown:
       return {snake.front().row + 1, snake.front().col};
     case Move::kRight:
-      return {snake.front().row, snake.front().col - 1};
-    case Move::kLeft:
       return {snake.front().row, snake.front().col + 1};
+    case Move::kLeft:
+      return {snake.front().row, snake.front().col - 1};
     default:
       return {snake.front().row, snake.front().col};
     }
@@ -169,7 +170,8 @@ Board::Board(int width, int height) : impl_(std::make_unique<Impl>()) {
 Board::~Board() = default;
 
 bool Board::IsGameOver() const {
-  return impl_->IsOutOfBounds() || impl_->IsCollidingWithBody();
+  return impl_->IsOutOfBounds(impl_->row, impl_->col) ||
+         impl_->IsCollidingWithBody();
 }
 
 absl::StatusOr<int> Board::ApplyMove(Move move) {
