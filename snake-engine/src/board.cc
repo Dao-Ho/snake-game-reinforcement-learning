@@ -59,10 +59,13 @@ struct Board::Impl {
   // Update the snake based on the move, if the new cell is an apple, spawn a
   // new apple and update the score
   void HandleAdvancingSnake(Move move) {
-    Position new_snake_head_position = DetermineUpdatedSnakeHeadPosition(move);
-    Cell incoming_cell_type =
-        grid[Index(new_snake_head_position.row, new_snake_head_position.col)];
-    HandleIncomingCellType(incoming_cell_type, new_snake_head_position);
+    Position new_head = DetermineUpdatedSnakeHeadPosition(move);
+    if (IsOutOfBounds(new_head.row, new_head.col)) {
+      snake.push_front(new_head);
+      return;
+    }
+    Cell incoming = grid[Index(new_head.row, new_head.col)];
+    HandleIncomingCellType(incoming, new_head);
   }
 
   void AdvanceSnake(Position updated_position, bool is_growing) {
@@ -187,6 +190,7 @@ absl::StatusOr<int> Board::ApplyMove(Move move) {
 
   // Advance the snake to the updated cell
   impl_->HandleAdvancingSnake(move);
+  impl_->snake_direction = move;
 
   // Determine if game is over
   if (IsGameOver()) {
@@ -197,13 +201,10 @@ absl::StatusOr<int> Board::ApplyMove(Move move) {
   return impl_->score;
 }
 
-void Board::DisplayBoard() const {
-  for (int i = 0; i < impl_->width * impl_->height; ++i) {
-    std::cout << impl_->GetCellCharacter(i);
-    if ((i + 1) % impl_->width == 0) {
-      std::cout << '\n';
-    }
-  }
-}
+int Board::GetWidth() const { return impl_->width; }
+
+int Board::GetHeight() const { return impl_->height; }
+
+const std::vector<Cell>& Board::GetGrid() const { return impl_->grid; }
 
 } // namespace SnakeEngine
