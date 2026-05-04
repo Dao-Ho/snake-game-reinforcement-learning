@@ -177,6 +177,8 @@ bool Board::IsGameOver() const {
          impl_->IsCollidingWithBody();
 }
 
+int Board::GetScore() const { return impl_->score; }
+
 absl::StatusOr<int> Board::ApplyMove(Move move) {
   // Return error status for invalid move given
   if (!impl_->IsValidMove(move)) {

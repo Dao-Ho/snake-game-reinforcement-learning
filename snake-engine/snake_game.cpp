@@ -13,7 +13,11 @@ int main() {
     std::cout << "\033[2J\033[H";
     game_board.DisplayBoard();
     std::cout.flush();
-    game_board.ApplyMove(current_move);
+    auto result = game_board.ApplyMove(current_move);
+    if (!result.ok()) {
+      std::cout << "Game Over! Score: " << game_board.GetScore() << '\n';
+      break;
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
   return 0;

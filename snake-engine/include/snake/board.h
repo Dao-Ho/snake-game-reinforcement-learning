@@ -21,6 +21,7 @@ public:
   absl::StatusOr<int> ApplyMove(Move move);
   bool IsGameOver() const;
   void DisplayBoard() const;
+  int GetScore() const;
 
 private:
   struct Impl;
