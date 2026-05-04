@@ -124,6 +124,15 @@ absl::StatusOr<int> Board::ApplyMove(Move move) {
   if (!impl_->IsValidMove(move)) {
     return absl::InvalidArgumentError("Move given is invalid");
   }
+
+  // Calculate new head position
+
+  // Determine if game is over
+
+
+  // Update the new head position and handle the case if the new cell is an apple
+
+  // Return the score
   return impl_->score;
 }
 
