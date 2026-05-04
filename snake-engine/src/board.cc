@@ -58,6 +58,22 @@ struct Board::Impl {
     snake.push_back({row, col});
   }
 
+  // Calculate the new head position
+  Position DetermineNewHeadPosition(Move move) {
+    switch (move) {
+    case Move::kUp:
+      return {snake.front().row - 1, snake.front().col};
+    case Move::kDown:
+      return {snake.front().row + 1, snake.front().col};
+    case Move::kRight:
+      return {snake.front().row, snake.front().col - 1};
+    case Move::kLeft:
+      return {snake.front().row, snake.front().col + 1};
+    default:
+      return {snake.front().row, snake.front().col};
+    }
+  }
+
   // Randomly spawn an apple on an empty cell
   void SpawnApple() {
     std::vector<int> empty_cells;
@@ -126,11 +142,12 @@ absl::StatusOr<int> Board::ApplyMove(Move move) {
   }
 
   // Calculate new head position
+  auto NewHeadPosition = impl_->DetermineNewHeadPosition(move);
 
   // Determine if game is over
 
-
-  // Update the new head position and handle the case if the new cell is an apple
+  // Update the new head position and handle the case if the new cell is an
+  // apple
 
   // Return the score
   return impl_->score;
