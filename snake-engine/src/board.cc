@@ -17,16 +17,15 @@ struct Board::Impl {
   int width;
   int height;
   int score;
-  bool game_over;
   std::mt19937 rng{std::random_device{}()};
 
   // helper to convert 2D to 1D index for flatmap
   int Index(int row, int col) const { return row * width + col; }
 
   // helper to check if the snake is out of bounds
-  bool IsOutOfBounds() const {
-    return snake.front().row >= height || snake.front().row < 0 ||
-           snake.front().col >= width || snake.front().col < 0;
+  bool IsOutOfBounds(int current_row, int current_col) const {
+    return current_row >= height || current_row < 0 || current_col >= width ||
+           current_col < 0;
   }
 
   // helper to check if the snake is colliding with its own body
@@ -45,7 +44,6 @@ struct Board::Impl {
   void InitializeGrid() {
     grid.assign(width * height, Cell::kEmpty);
     score = 0;
-    game_over = false;
   }
 
   // Spawn the snake at the middle of the board
@@ -56,6 +54,64 @@ struct Board::Impl {
     grid[snake_index] = Cell::kSnakeHead;
     snake_direction = Move::kUp;
     snake.push_back({row, col});
+  }
+
+  // Update the snake based on the move, if the new cell is an apple, spawn a
+  // new apple and update the score
+  void HandleAdvancingSnake(Move move) {
+    Position new_snake_head_position = DetermineUpdatedSnakeHeadPosition(move);
+    Cell incoming_cell_type =
+        grid[Index(new_snake_head_position.row, new_snake_head_position.col)];
+    HandleIncomingCellType(incoming_cell_type, new_snake_head_position);
+  }
+
+  void AdvanceSnake(Position updated_position, bool is_growing) {
+    // Advance the head
+    Position current_head = snake.front();
+    grid[Index(current_head.row, current_head.col)] = Cell::kSnakeBody;
+    grid[Index(updated_position.row, updated_position.col)] = Cell::kSnakeHead;
+    snake.push_front(updated_position);
+
+    if (!is_growing) {
+      // Remove/advance the old tail
+      Position current_tail = snake.back();
+      grid[Index(current_tail.row, current_tail.col)] = Cell::kEmpty;
+      snake.pop_back();
+    }
+  }
+
+  void UpdateScore() { ++score; }
+
+  void HandleIncomingCellType(Cell cell_type, Position updated_position) {
+    switch (cell_type) {
+    case Cell::kEmpty:
+      AdvanceSnake(updated_position, false);
+      break;
+    case Cell::kApple:
+      AdvanceSnake(updated_position, true);
+      SpawnApple();
+      UpdateScore();
+      break;
+    case Cell::kSnakeBody:
+    case Cell::kSnakeHead:
+      return;
+    }
+  }
+
+  // Determine the updated position of the snake's head
+  Position DetermineUpdatedSnakeHeadPosition(Move move) {
+    switch (move) {
+    case Move::kUp:
+      return {snake.front().row - 1, snake.front().col};
+    case Move::kDown:
+      return {snake.front().row + 1, snake.front().col};
+    case Move::kRight:
+      return {snake.front().row, snake.front().col + 1};
+    case Move::kLeft:
+      return {snake.front().row, snake.front().col - 1};
+    default:
+      return {snake.front().row, snake.front().col};
+    }
   }
 
   // Randomly spawn an apple on an empty cell
@@ -116,7 +172,9 @@ Board::Board(int width, int height) : impl_(std::make_unique<Impl>()) {
 Board::~Board() = default;
 
 bool Board::IsGameOver() const {
-  return impl_->IsOutOfBounds() || impl_->IsCollidingWithBody();
+  return impl_->IsOutOfBounds(impl_->snake.front().row,
+                              impl_->snake.front().col) ||
+         impl_->IsCollidingWithBody();
 }
 
 absl::StatusOr<int> Board::ApplyMove(Move move) {
@@ -124,6 +182,16 @@ absl::StatusOr<int> Board::ApplyMove(Move move) {
   if (!impl_->IsValidMove(move)) {
     return absl::InvalidArgumentError("Move given is invalid");
   }
+
+  // Advance the snake to the updated cell
+  impl_->HandleAdvancingSnake(move);
+
+  // Determine if game is over
+  if (IsGameOver()) {
+    return absl::OutOfRangeError("Game is over");
+  }
+
+  // Return the score
   return impl_->score;
 }
 
