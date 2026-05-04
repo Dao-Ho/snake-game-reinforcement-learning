@@ -27,7 +27,7 @@ int main() {
   Board game_board(24, 21);
   Move current_move = Move::kUp;
 
-  while (true) {
+  while (!game_board.IsGameOver()) {
     int ch = getch();
     switch (ch) {
     case KEY_UP:    current_move = Move::kUp;    break;
@@ -51,7 +51,7 @@ int main() {
 
     if (!result.ok() &&
         result.status().code() == absl::StatusCode::kOutOfRange) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
       break;
     }
 
