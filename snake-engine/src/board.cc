@@ -58,8 +58,47 @@ struct Board::Impl {
     snake.push_back({row, col});
   }
 
-  // Calculate the new head position
-  Position DetermineNewHeadPosition(Move move) {
+  // Update the snake based on the move, if the new cell is an apple, spawn a
+  // new apple and update the score
+  void HandleAdvancingSnake(Move move) {
+    Position new_snake_head_position = DetermineUpdatedSnakeHeadPosition(move);
+    Cell incoming_cell_type =
+        grid[Index(new_snake_head_position.row, new_snake_head_position.col)];
+  }
+
+  void AdvanceSnake(Position updated_position, bool is_growing) {
+    // Advance the head
+    Position current_head = snake.front();
+    grid[Index(current_head.row, current_head.col)] = Cell::kSnakeBody;
+    grid[Index(updated_position.row, updated_position.col)] = Cell::kSnakeHead;
+    snake.push_front(updated_position);
+
+    if (!is_growing) {
+      // Remove/advance the old tail
+      Position current_tail = snake.back();
+      grid[Index(current_tail.row, current_tail.col)] = Cell::kEmpty;
+      snake.pop_back();
+    }
+  }
+
+  void UpdateScore() { ++score; }
+
+  void HandleIncomingCellType(Cell cell_type, Position updated_position) {
+    switch (cell_type) {
+    case Cell::kEmpty:
+      AdvanceSnake(updated_position, false);
+    case Cell::kApple:
+      AdvanceSnake(updated_position, true);
+      SpawnApple();
+      UpdateScore();
+    case Cell::kSnakeBody:
+    case Cell::kSnakeHead:
+      return;
+    }
+  }
+
+  // Determine the updated position of the snake's head
+  Position DetermineUpdatedSnakeHeadPosition(Move move) {
     switch (move) {
     case Move::kUp:
       return {snake.front().row - 1, snake.front().col};
@@ -141,13 +180,13 @@ absl::StatusOr<int> Board::ApplyMove(Move move) {
     return absl::InvalidArgumentError("Move given is invalid");
   }
 
-  // Calculate new head position
-  auto NewHeadPosition = impl_->DetermineNewHeadPosition(move);
+  // Advance the snake to the updated cell
+  impl_->HandleAdvancingSnake(move);
 
   // Determine if game is over
 
-  // Update the new head position and handle the case if the new cell is an
-  // apple
+  // Update the new cell with the head, if the new cell is an apple, spawn a new
+  // apple and update the score
 
   // Return the score
   return impl_->score;
