@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -20,7 +21,10 @@ public:
   // apply the move, return the current score after the move
   absl::StatusOr<int> ApplyMove(Move move);
   bool IsGameOver() const;
-  void DisplayBoard() const;
+  int GetScore() const;
+  int GetWidth() const;
+  int GetHeight() const;
+  const std::vector<Cell>& GetGrid() const;
 
 private:
   struct Impl;
