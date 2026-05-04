@@ -1,4 +1,5 @@
 #include "snake/board.h"
+#include <ncurses.h>
 
 #include <chrono>
 #include <iostream>
