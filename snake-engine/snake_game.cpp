@@ -9,11 +9,11 @@ using namespace SnakeEngine;
 
 static const char* CellToChar(Cell cell) {
   switch (cell) {
-  case Cell::kEmpty:     return ".";
-  case Cell::kSnakeHead: return "@";
-  case Cell::kSnakeBody: return "o";
-  case Cell::kApple:     return "*";
-  default:               return " ";
+  case Cell::kEmpty:     return ". ";
+  case Cell::kSnakeHead: return "@ ";
+  case Cell::kSnakeBody: return "o ";
+  case Cell::kApple:     return "* ";
+  default:               return "  ";
   }
 }
 
