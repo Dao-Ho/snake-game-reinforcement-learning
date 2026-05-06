@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+enable_testing()
 
 FetchContent_Declare(
   googletest
@@ -12,6 +12,3 @@ target_link_libraries(board_tests PRIVATE snake_engine GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(board_tests)
-
-test: build
-      cd build && ctest --output-on-failure

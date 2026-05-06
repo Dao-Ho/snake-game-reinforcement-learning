@@ -1,4 +1,4 @@
-.PHONY: configure build run clean
+.PHONY: configure build run clean test
 
 configure:
 	cmake -B build
@@ -11,3 +11,7 @@ run: build
 
 clean:
 	rm -rf build
+
+test: build
+	cd build && ctest --output-on-failure
+    
