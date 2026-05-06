@@ -5,5 +5,5 @@ class Experience(BaseModel):
     action: int 
     reward: float
     next_state: list[int]
-    done: boolean
+    done: bool
     
