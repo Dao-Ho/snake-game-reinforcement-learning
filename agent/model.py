@@ -15,4 +15,3 @@ class DQN(nn.Module):
         x = F.relu(x)
         x = self.layer3(x)
         return x
-        
