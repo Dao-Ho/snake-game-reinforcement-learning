@@ -10,7 +10,7 @@ class ReplayBuffer():
         return len(self.replay_buffer)
 
     def push(self, experience: Experience) -> None:
-        deque.append(experience)
+        self.replay_buffer.append(experience)
 
     def sample(self, size: int) -> list[Experience]:
         if size > len(self.replay_buffer):
