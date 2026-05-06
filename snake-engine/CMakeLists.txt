@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.20)
 project(SnakeGame CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+enable_testing()
 include(FetchContent)
 
 FetchContent_Declare(
@@ -24,3 +25,5 @@ target_link_libraries(snake_game PRIVATE snake_engine ncurses)
 
 
 target_include_directories(snake_engine PUBLIC include)
+
+add_subdirectory(tests)
