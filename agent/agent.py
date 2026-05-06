@@ -1,5 +1,6 @@
 from model import DQN
 from replay_buffer import ReplayBuffer
+from models.experience import Experience
 import torch.optim as optim
 import torch
 import random
@@ -21,4 +22,10 @@ class SnakeGameAgent():
             else:
                 q_values = self.model(state)
                 return torch.argmax(q_values).item()
-    
+
+    def store_experience(self, state, action, reward, next_state, done):
+        self.replay_buffer.push(
+            Experience(
+                state = state, action = action, reward = reward, next_state = next_state, done = done
+            )
+        )
