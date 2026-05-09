@@ -4,7 +4,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(snake_engine, m) {
+PYBIND11_MODULE(snake_engine_py, m) {
   py::enum_<SnakeEngine::Move>(m, "Move")
       .value("kUp", SnakeEngine::Move::kUp)
       .value("kDown", SnakeEngine::Move::kDown)
