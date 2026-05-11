@@ -29,6 +29,7 @@ PYBIND11_MODULE(snake_engine_py, m) {
            })
       .def("is_game_over", &SnakeEngine::Board::IsGameOver)
       .def("get_grid", &SnakeEngine::Board::GetGrid)
+      .def("get_direction", &SnakeEngine::Board::GetDirection)
       .def("get_score", &SnakeEngine::Board::GetScore)
       .def("get_width", &SnakeEngine::Board::GetWidth)
       .def("get_height", &SnakeEngine::Board::GetHeight);

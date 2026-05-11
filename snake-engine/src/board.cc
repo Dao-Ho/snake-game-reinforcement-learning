@@ -209,4 +209,6 @@ int Board::GetHeight() const { return impl_->height; }
 
 const std::vector<Cell> &Board::GetGrid() const { return impl_->grid; }
 
+Move Board::GetDirection() const { return impl_->snake_direction; }
+
 } // namespace SnakeEngine
