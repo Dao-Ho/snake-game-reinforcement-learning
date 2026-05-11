@@ -9,12 +9,16 @@ import torch.nn as nn
 class SnakeGameAgent():
     def __init__(self):
         self.model = DQN(input_size=11, output_size=4)
+        self.target_model = DQN(input_size=11, output_size=4)
+        self.target_model.load_state_dict(self.model.state_dict())
         self.replay_buffer = ReplayBuffer(10000)
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         self.epsilon = 1.0
         self.epsilon_decay = 0.995
         self.epsilon_min = 0.01
         self.gamma = 0.99
+        self.target_update_freq = 100
+        self.train_step = 0
 
     def select_action(self, state):
         with torch.no_grad():
@@ -54,7 +58,8 @@ class SnakeGameAgent():
         # 5. Compute target Q-values using Bellman:
         # target = reward + gamma * max(Q(s', a')) * (1 - done)
         # (1 - done) zeroes out future reward if game ended
-        next_q_values = self.model(next_states).max(1).values
+        with torch.no_grad():
+            next_q_values = self.target_model(next_states).max(1).values
         targets = rewards + self.gamma * next_q_values * (1 - dones)
     
         # 6. Compute loss between current and target Q-values
@@ -65,6 +70,10 @@ class SnakeGameAgent():
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+
+        self.train_step += 1
+        if self.train_step % self.target_update_freq == 0:
+            self.target_model.load_state_dict(self.model.state_dict())
 
     def decay_epsilon(self) -> None:
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
