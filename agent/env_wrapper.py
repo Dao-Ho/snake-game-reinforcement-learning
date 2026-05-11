@@ -17,8 +17,8 @@ def action_idx_to_move(action_idx: int) -> snake_engine.Move:
     ][action_idx]
 
 
-def grid_to_state(board) -> list[int]:
-    return [int(c) for c in board.get_grid()]
+def grid_to_state(board) -> list[float]:
+    return [int(c) / 3.0 for c in board.get_grid()]
 
 
 def compute_reward(score_before: int, score_after: int, done: bool) -> float:
