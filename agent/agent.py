@@ -22,7 +22,8 @@ class SnakeGameAgent():
                 # explore a random move that may not be optimal
                 return random.randint(0, 3)
             else:
-                q_values = self.model(state)
+                state_tensor = torch.tensor(state, dtype=torch.float32)
+                q_values = self.model(state_tensor)
                 return torch.argmax(q_values).item()
 
     def store_experience(self, state, action, reward, next_state, done):
