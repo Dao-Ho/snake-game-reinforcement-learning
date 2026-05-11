@@ -128,9 +128,10 @@ struct Board::Impl {
       }
     }
 
+    if (empty_cells.empty()) return;
     std::uniform_int_distribution<int> dist(0, empty_cells.size() - 1);
     int chosen = dist(rng);
-    grid[chosen] = Cell::kApple;
+    grid[empty_cells[chosen]] = Cell::kApple;
   }
 
   // Determines if the move given is valid given the snake's current direction
