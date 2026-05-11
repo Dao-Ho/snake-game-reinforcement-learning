@@ -19,6 +19,7 @@ for episode in range(EPISODES):
     board = snake_engine.Board(WIDTH, HEIGHT)
     score, total_reward = run_episode(agent, board, BATCH_SIZE)
 
+    agent.decay_epsilon()
     recent_scores.append(score)
     avg_score = sum(recent_scores) / len(recent_scores)
 

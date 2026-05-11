@@ -65,6 +65,6 @@ class SnakeGameAgent():
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-    
-        # 8. Decay epsilon
+
+    def decay_epsilon(self) -> None:
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
