@@ -1,10 +1,9 @@
 from collections import deque
 
-import snake_engine_py as snake_engine
+from env_wrapper import run_episode, snake_engine
 
 import checkpoint
 from agent import SnakeGameAgent
-from env_wrapper import run_episode
 
 WIDTH = 24
 HEIGHT = 21
