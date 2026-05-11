@@ -25,6 +25,7 @@ public:
   int GetWidth() const;
   int GetHeight() const;
   const std::vector<Cell>& GetGrid() const;
+  Move GetDirection() const;
 
 private:
   struct Impl;
