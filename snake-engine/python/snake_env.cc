@@ -11,6 +11,12 @@ PYBIND11_MODULE(snake_engine_py, m) {
       .value("kLeft", SnakeEngine::Move::kLeft)
       .value("kRight", SnakeEngine::Move::kRight);
 
+  py::enum_<SnakeEngine::Cell>(m, "Cell")
+      .value("kEmpty", SnakeEngine::Cell::kEmpty)
+      .value("kSnakeBody", SnakeEngine::Cell::kSnakeBody)
+      .value("kSnakeHead", SnakeEngine::Cell::kSnakeHead)
+      .value("kApple", SnakeEngine::Cell::kApple);
+
   py::class_<SnakeEngine::Board>(m, "Board")
       .def(py::init<int, int>())
       .def("apply_move",
